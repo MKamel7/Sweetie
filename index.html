@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweetie will you be my Valentine?</title>
+  <style>
+    :root{
+      --bg: #fff0f4;
+      --card:#fff;
+      --accent:#ff6b9a;
+      --text:#201a1f;
+    }
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(circle at 10% 20%, #ffeaf0 0%, transparent 20%),
+                  radial-gradient(circle at 90% 80%, #fff0f4 0%, transparent 20%),
+                  #ffeef4;
+      padding:24px;
+      box-sizing:border-box;
+    }
+
+    .stage{width:100%;max-width:920px;display:flex;gap:20px;align-items:center;justify-content:center;flex-direction:column;}
+
+    /* envelope */
+    #envelope{
+      width:220px;max-width:45vw;cursor:pointer;transition:transform .4s ease;filter:drop-shadow(0 8px 20px rgba(0,0,0,.12));
+      border-radius:12px;
+    }
+    #envelope:active{transform:scale(.98) translateY(2px);}
+
+    /* card */
+    .card{
+      width:100%;max-width:820px;background:var(--card);border-radius:18px;padding:20px;box-shadow:0 12px 40px rgba(16,12,20,.12);
+      display:flex;flex-direction:column;align-items:center;gap:10px;box-sizing:border-box;
+    }
+    .letter-window{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:18px;}
+    h1{margin:0;font-size:clamp(20px,4vw,34px);color:var(--text);letter-spacing:0.5px}
+    .cat{width:180px;max-width:40vw;border-radius:12px;}
+    .buttons{display:flex;gap:18px;align-items:center;justify-content:center;margin-top:6px;}
+    .btn{width:130px;max-width:32vw;cursor:pointer;user-select:none;border-radius:12px;box-shadow:0 8px 18px rgba(0,0,0,.12);touch-action:none;}
+    .no-btn{position:relative;transition:transform .28s cubic-bezier(.2,.9,.2,1);}
+
+    .final-text{display:none;font-size:clamp(15px,3vw,22px);color:var(--accent);margin-top:6px;font-weight:600;}
+    .small{font-size:13px;color:#7f6f7a;margin-top:6px;}
+
+    /* responsive tweaks */
+    @media (min-width:880px){
+      .stage{flex-direction:row;padding:32px;}
+      .card{flex:1}
+    }
+    /* subtle pulse for envelope */
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+    .pulse{animation:pulse 1.6s infinite}
+    /* finally */
+    .hidden{display:none !important}
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <!-- envelope screen -->
+    <div id="envelope-screen" style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <img id="envelope-img" class="pulse" src="https://raw.githubusercontent.com/lovesulei/valentine-ask/6a71943c6759760d464cba5bf9f2590471fe4721/envelope.png" alt="Envelope" />
+      <div style="text-align:center">
+        <div style="font-weight:700;font-size:18px;color:#33262f">A letter for Tereza</div>
+        <div class="small">Tap the envelope to open</div>
+      </div>
+    </div>
+
+    <!-- letter screen (initially hidden) -->
+    <article id="letter-screen" class="card hidden" role="region" aria-label="Valentine letter for Tereza">
+      <div class="letter-window">
+        <h1 id="letter-title">Sweetie will you be my Valentine?</h1>
+        <img id="cat-gif" class="cat" src="https://raw.githubusercontent.com/lovesulei/valentine-ask/6a71943c6759760d464cba5bf9f2590471fe4721/cat_heart.gif" alt="cute cat" />
+        <div class="buttons" id="letter-buttons" aria-hidden="false">
+          <img id="yes-btn" class="btn" src="https://raw.githubusercontent.com/lovesulei/valentine-ask/6a71943c6759760d464cba5bf9f2590471fe4721/yes.png" alt="Yes" />
+          <img id="no-btn" class="btn no-btn" src="https://raw.githubusercontent.com/lovesulei/valentine-ask/6a71943c6759760d464cba5bf9f2590471fe4721/no.png" alt="No" />
+        </div>
+
+        <p id="final-text" class="final-text" aria-live="polite"><strong>Meet me on Discord at 7pm on Valentine's day.</strong></p>
+        <p class="small"></p>
+      </div>
+    </article>
+  </main>
+
+  <script>
+    (function(){
+      const envelopeScreen = document.getElementById('envelope-screen');
+      const envelopeImg = document.getElementById('envelope-img');
+      const letterScreen = document.getElementById('letter-screen');
+      const yesBtn = document.getElementById('yes-btn');
+      const noBtn = document.getElementById('no-btn');
+      const catGif = document.getElementById('cat-gif');
+      const finalText = document.getElementById('final-text');
+      const stage = document.getElementById('stage');
+
+      // Open envelope
+      function openLetter(){
+        envelopeScreen.classList.add('hidden');
+        letterScreen.classList.remove('hidden');
+        // small entrance
+        letterScreen.style.transform = 'translateY(8px) scale(.99)';
+        setTimeout(()=>{ letterScreen.style.transform = ''; }, 20);
+      }
+      envelopeImg.addEventListener('click', openLetter);
+      envelopeImg.addEventListener('touchstart', openLetter);
+
+      // move NO button randomly on hover / touch
+      function moveAway(ev){
+        // compute random offset within stage bounds
+        const w = Math.max(220, stage.clientWidth - 120);
+        const h = Math.max(120, stage.clientHeight - 120);
+        const distance = Math.random() * (w*0.45) + 80;
+        const angle = Math.random() * Math.PI * 2;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        noBtn.style.transform = `translate(${x}px, ${y}px)`;
+      }
+      noBtn.addEventListener('pointerenter', moveAway);
+      noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); moveAway(); }, {passive:false});
+
+      // When yes clicked
+      yesBtn.addEventListener('click', function(){
+        document.getElementById('letter-title').textContent = 'I knew it!';
+        catGif.src = 'https://raw.githubusercontent.com/lovesulei/valentine-ask/6a71943c6759760d464cba5bf9f2590471fe4721/cat_dance.gif';
+        // hide buttons, show message
+        document.getElementById('letter-buttons').style.display = 'none';
+        finalText.style.display = 'block';
+      });
+
+      // keyboard accessibility for no/yes
+      noBtn.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') moveAway(); });
+      yesBtn.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') yesBtn.click(); });
+
+      // Small safety: if images fail to load, fall back to text
+      catGif.addEventListener('error', function(){ catGif.style.display='none'; });
+      yesBtn.addEventListener('error', function(){ yesBtn.style.display='none'; });
+      noBtn.addEventListener('error', function(){ noBtn.style.display='none'; });
+    })();
+  </script>
+</body>
+</html>
