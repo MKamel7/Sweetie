@@ -10,6 +10,9 @@ export const BIRTHDAY = {
   timeZone: 'Europe/Berlin', // every time shown in the app is Berlin time
 };
 
+// Where progress is saved on her phone. Change the "run" to restart everyone from the beginning.
+export const STORAGE_KEY = `sweetie:${BIRTHDAY.date}:run2`;
+
 // on('2026-10-02', '14:00') = 2pm Berlin time on that date.
 const on = (date, time) => localTime(date, time, BIRTHDAY.utcOffset);
 const MEET_DAY = '2026-10-02'; // the day you see her
@@ -18,7 +21,7 @@ export const HER = {
   name: 'Tereza',
   nickname: 'Sweetie',
   from: 'Kamel', // how you sign your letters
-  age: 0, // candles on the cake (0 = hide the number)
+  age: 27, // shown as number candles on the cake (0 = five plain candles)
 };
 
 export const INTRO_LETTER = [

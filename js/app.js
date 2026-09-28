@@ -1,4 +1,4 @@
-import { BIRTHDAY, HER, INTRO_LETTER, GIFTS, FINALE, NO_PEEKING } from './config.js';
+import { BIRTHDAY, HER, INTRO_LETTER, GIFTS, FINALE, NO_PEEKING, STORAGE_KEY } from './config.js';
 import { SEALED } from './sealed.js';
 import { unseal } from './unseal.js';
 import {
@@ -12,7 +12,11 @@ const $ = (sel) => document.querySelector(sel);
 const gifts = parseGifts(GIFTS);
 
 // ---------- persistence (namespaced per birthday so next year starts fresh) ----------
-const KEY = `sweetie:${BIRTHDAY.date}`;
+const KEY = STORAGE_KEY;
+// Drop progress from earlier runs so the whole journey starts over.
+try {
+  Object.keys(localStorage).filter((k) => k.startsWith('sweetie:') && k !== KEY).forEach((k) => localStorage.removeItem(k));
+} catch { /* storage blocked */ }
 const store = {
   load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
@@ -549,16 +553,18 @@ let stopMic = null;
 function enterFinale() {
   show('finale');
   history.pushState({ finale: true }, '');
-  const count = HER.age > 0 ? Math.min(HER.age, 30) : 5;
-  $('#cake-age').textContent = HER.age > 0 ? HER.age : '';
+  // Her age as number candles ("2" "7"), otherwise five plain ones.
+  const digits = HER.age > 0 ? String(HER.age).split('') : null;
+  const count = digits ? digits.length : 5;
+  $('#cake-age').textContent = '';
   const candles = $('#candles');
   candles.innerHTML = '';
   for (let i = 0; i < count; i++) {
     const c = document.createElement('button');
-    c.className = 'candle';
-    c.setAttribute('aria-label', 'Candle');
-    c.style.setProperty('--h', `${36 + (i % 3) * 6}px`);
-    c.innerHTML = `<span class="flame">${sprite('flame')}</span>`;
+    c.className = digits ? 'candle digit' : 'candle';
+    c.setAttribute('aria-label', digits ? `Candle ${digits[i]}` : 'Candle');
+    if (!digits) c.style.setProperty('--h', `${36 + (i % 3) * 6}px`);
+    c.innerHTML = `<span class="flame">${sprite('flame')}</span>${digits ? `<span class="num">${digits[i]}</span>` : ''}`;
     c.addEventListener('click', () => blowOut(c));
     candles.appendChild(c);
   }

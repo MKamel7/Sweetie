@@ -6,11 +6,11 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium, devices } from 'playwright';
 import { serve } from '../serve.mjs';
-import { GIFTS, FINALE, BIRTHDAY } from '../../js/config.js';
+import { GIFTS, FINALE, STORAGE_KEY } from '../../js/config.js';
 import { parseGifts } from '../../js/timelock.js';
 
 const gifts = parseGifts(GIFTS);
-const KEY = `sweetie:${BIRTHDAY.date}`;
+const KEY = STORAGE_KEY;
 
 const CONTENT = {
   midnight: { title: 'Test Letter', icon: 'letter', letter: ['Dear tester,', 'First paragraph.', 'Last paragraph.'], signoff: ['Yours,', 'Koko'] },
@@ -246,6 +246,15 @@ test('sends a reminder 10 seconds before a surprise', async () => {
   const [[title, body]] = await page.evaluate(() => window.__notes);
   assert.equal(title, 'A surprise opens in 10 seconds');
   assert.equal(body, gifts[1].teaser);
+  await ctx.close();
+});
+
+test('progress from an earlier run is wiped, so she starts from the beginning', async () => {
+  const { page, ctx } = await openApp({ at: gifts[0].unlockAt - 3_600_000 });
+  await page.evaluate(() => localStorage.setItem('sweetie:2026-09-29', JSON.stringify({ introSeen: true, installSeen: true })));
+  await page.reload();
+  await page.locator('#install').waitFor();
+  assert.equal(await page.evaluate(() => localStorage.getItem('sweetie:2026-09-29')), null);
   await ctx.close();
 });
 
