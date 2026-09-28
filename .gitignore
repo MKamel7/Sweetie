@@ -1,0 +1,4 @@
+node_modules/
+test-results/
+# Plaintext clues and letters. Never commit: run `npm run seal` to produce js/sealed.js.
+secrets/

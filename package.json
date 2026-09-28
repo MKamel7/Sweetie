@@ -1,0 +1,19 @@
+{
+  "name": "sweetie-birthday",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node tests/serve.mjs",
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "node --test --test-concurrency=1 \"tests/e2e/*.test.mjs\"",
+    "icons": "node tests/make-icons.mjs",
+    "seal": "node scripts/seal.mjs",
+    "build:tlock": "node scripts/build-tlock.mjs",
+    "test:drand": "node tests/drand-smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1",
+    "esbuild": "0.24.0",
+    "tlock-js": "0.9.0"
+  }
+}
