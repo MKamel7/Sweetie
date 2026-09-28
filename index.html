@@ -13,6 +13,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@500;700;800&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/app.css" />
+  <script>
+    // Chrome's "Desktop site" mode renders a ~980px page on a phone and shrinks it.
+    // Scale back up so the app always fills a phone screen.
+    (function () {
+      var sw = screen.width, w = window.innerWidth;
+      if (sw && sw < 760 && w > sw * 1.25) document.documentElement.style.zoom = (w / sw).toFixed(3);
+    })();
+  </script>
 </head>
 <body>
   <div class="backdrop" aria-hidden="true"><div class="floaties" id="floaties"></div></div>

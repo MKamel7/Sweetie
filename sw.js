@@ -1,5 +1,5 @@
 // Offline support. Bump VERSION whenever you change any file so her phone picks up the update.
-const VERSION = 'v10';
+const VERSION = 'v11';
 const CACHE = `sweetie-${VERSION}`;
 const ASSETS = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest',
