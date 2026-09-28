@@ -20,10 +20,24 @@
       var sw = screen.width, w = window.innerWidth;
       if (sw && sw < 760 && w > sw * 1.25) document.documentElement.style.zoom = (w / sw).toFixed(3);
     })();
+    // Keep Chrome's install offer even if it fires before the app script loads.
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__installPrompt = e; });
   </script>
 </head>
 <body>
   <div class="backdrop" aria-hidden="true"><div class="floaties" id="floaties"></div></div>
+
+  <!-- 0. Install first (only in the browser, first visit) -->
+  <section id="install" class="screen hidden" aria-label="Install the app">
+    <div class="install-card paper">
+      <div class="install-icon" id="install-icon"></div>
+      <h1 class="pixel-title">A gift for <span data-name></span></h1>
+      <p class="install-text" id="install-text">Install it on your phone first, so your surprises are always one tap away.</p>
+      <button class="pxbtn yes install-btn" id="install-btn">Install</button>
+      <p class="install-help hidden" id="install-help">Tap <strong>⋮</strong> at the top right of Chrome, then <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+      <button class="linkbtn" id="install-skip">Open it here instead</button>
+    </div>
+  </section>
 
   <!-- 1. Intro: envelope + letter -->
   <section id="intro" class="screen" aria-label="Birthday letter">

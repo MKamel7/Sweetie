@@ -73,8 +73,31 @@ async function openApp({ at = Date.now(), serverAt = at, saved, reducedMotion = 
 
 const nodeFor = (page, i) => page.locator('.node').nth(i + 1); // node 0 is "start"
 
+test('first visit in the browser starts with the install screen', async () => {
+  const { page, ctx, errors } = await openApp({ at: gifts[0].unlockAt - 3_600_000 });
+  await page.locator('#install').waitFor();
+  // No install offer from Chrome yet: the button explains the manual route.
+  await page.getByRole('button', { name: 'Install' }).click();
+  await page.locator('#install-help').waitFor();
+  // Chrome offers the install: the button opens it.
+  await page.evaluate(() => {
+    window.__prompted = 0;
+    window.__installPrompt = { prompt() { window.__prompted++; }, userChoice: Promise.resolve({ outcome: 'accepted' }) };
+  });
+  await page.getByRole('button', { name: 'Install' }).click();
+  await page.getByText('Installed! Open it from your home screen.').waitFor();
+  assert.equal(await page.evaluate(() => window.__prompted), 1);
+  await page.getByRole('button', { name: 'Continue here' }).click();
+  await page.locator('#intro').waitFor();
+  await page.reload();
+  await page.locator('#intro').waitFor(); // never asks again
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
 test('first visit: envelope, letter, runaway No button, then the map', async () => {
   const { page, ctx, errors } = await openApp({ at: gifts[0].unlockAt - 3_600_000, reducedMotion: 'no-preference' });
+  await page.getByRole('button', { name: 'Open it here instead' }).click();
   await page.getByRole('button', { name: 'Open the envelope' }).click({ force: true });
   await page.locator('#letter').waitFor();
   await page.locator('#typed').click(); // tap skips the typing

@@ -79,6 +79,40 @@ function fmtWhen(ms) {
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// ---------- install ----------
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+function initInstall() {
+  $('#install-icon').innerHTML = sprite('gift');
+  const btn = $('#install-btn');
+  const done = (msg) => {
+    $('#install-text').textContent = msg;
+    btn.classList.add('hidden');
+    $('#install-help').classList.add('hidden');
+    $('#install-skip').textContent = 'Continue here';
+  };
+  btn.addEventListener('click', async () => {
+    const offer = window.__installPrompt;
+    if (!offer) {
+      // Chrome hasn't offered the install yet (or can't here): show the manual route.
+      $('#install-help').classList.remove('hidden');
+      return;
+    }
+    offer.prompt();
+    const { outcome } = await offer.userChoice;
+    window.__installPrompt = null;
+    if (outcome === 'accepted') done('Installed! Open it from your home screen.');
+  });
+  addEventListener('appinstalled', () => {
+    confetti({ y: innerHeight * 0.4, count: 80 });
+    done('Installed! Open it from your home screen.');
+  });
+  $('#install-skip').addEventListener('click', () => {
+    store.save({ installSeen: true });
+    show('intro');
+  });
+}
+
 // ---------- intro ----------
 function initIntro() {
   const env = $('#envelope');
@@ -633,7 +667,10 @@ function boot() {
     lastWidth = innerWidth;
     points = []; segLenCache.clear(); lastSignature = ''; update();
   });
-  if (state.introSeen) enterMap(); else show('intro');
+  initInstall();
+  if (state.introSeen) enterMap();
+  else if (!standalone() && !state.installSeen) show('install');
+  else show('intro');
   update();
   setInterval(update, 1000);
   syncClock();
