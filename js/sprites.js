@@ -333,3 +333,55 @@ export function sprite(name, className = '') {
   });
   return `<svg class="px ${className}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`;
 }
+
+// 3x5 pixel digits for the number candles.
+const DIGITS = {
+  0: ['###', '#.#', '#.#', '#.#', '###'],
+  1: ['.#.', '##.', '.#.', '.#.', '###'],
+  2: ['###', '..#', '###', '#..', '###'],
+  3: ['###', '..#', '.##', '..#', '###'],
+  4: ['#.#', '#.#', '###', '..#', '..#'],
+  5: ['###', '#..', '###', '..#', '###'],
+  6: ['###', '#..', '###', '#.#', '###'],
+  7: ['###', '..#', '.#.', '.#.', '.#.'],
+  8: ['###', '#.#', '###', '#.#', '###'],
+  9: ['###', '#.#', '###', '..#', '###'],
+};
+
+/** A tall pixel number candle (11x26): wick, rounded outline, highlight, 2x digit, spiral stripes. */
+export function numberCandleGrid(d) {
+  const W = 11, H = 26;
+  const inside = (x, y) => {
+    if (y < 1 || y >= H || x < 0 || x >= W) return false;
+    if ((y === 1 || y === H - 1) && (x < 2 || x > W - 3)) return false; // rounded corners
+    if ((y === 2 || y === H - 2) && (x === 0 || x === W - 1)) return false;
+    return true;
+  };
+  const g = Array.from({ length: H }, () => Array(W).fill('.'));
+  g[0][5] = 'k'; // wick
+  for (let y = 1; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (!inside(x, y)) continue;
+      const edge = !inside(x - 1, y) || !inside(x + 1, y) || !inside(x, y - 1) || !inside(x, y + 1);
+      g[y][x] = edge ? 'k' : 'r';
+    }
+  }
+  // Spiral stripes below the digit, a highlight down the left, shading at the base.
+  for (let y = 16; y < H - 2; y++) {
+    for (let x = 1; x < W - 1; x++) if (g[y][x] === 'r' && (x + y) % 5 < 2) g[y][x] = 'l';
+  }
+  for (let y = 3; y < H - 2; y++) if (g[y][2] === 'r') g[y][2] = 'o';
+  for (let x = 2; x < W - 2; x++) if (g[H - 3][x] !== 'k') g[H - 3][x] = 'b';
+  // Digit, scaled 2x, with a drop shadow.
+  const glyph = DIGITS[d];
+  const ox = 3, oy = 4;
+  const cells = [];
+  glyph.forEach((row, gy) => [...row].forEach((c, gx) => {
+    if (c === '#') for (let sy = 0; sy < 2; sy++) for (let sx = 0; sx < 2; sx++) cells.push([ox + gx * 2 + sx, oy + gy * 2 + sy]);
+  }));
+  for (const [x, y] of cells) if (g[y + 1][x + 1] !== 'k') g[y + 1][x + 1] = 'b';
+  for (const [x, y] of cells) g[y][x] = 'w';
+  return g.map((r) => r.join(''));
+}
+
+for (let d = 0; d <= 9; d++) SPRITES[`candle${d}`] = numberCandleGrid(d);

@@ -564,7 +564,7 @@ function enterFinale() {
     c.className = digits ? 'candle digit' : 'candle';
     c.setAttribute('aria-label', digits ? `Candle ${digits[i]}` : 'Candle');
     if (!digits) c.style.setProperty('--h', `${36 + (i % 3) * 6}px`);
-    c.innerHTML = `<span class="flame">${sprite('flame')}</span>${digits ? `<span class="num">${digits[i]}</span>` : ''}`;
+    c.innerHTML = `<span class="flame">${sprite('flame')}</span>${digits ? sprite(`candle${digits[i]}`, 'num') : ''}`;
     c.addEventListener('click', () => blowOut(c));
     candles.appendChild(c);
   }
