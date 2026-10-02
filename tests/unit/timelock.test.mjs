@@ -148,14 +148,18 @@ function stanza(armored) {
 const roundTime = (r) => (defaultChainInfo.genesis_time + (r - 1) * defaultChainInfo.period) * 1000;
 
 test('every gift and the cake letter are sealed to drand, never openable a second early', () => {
-  const items = [...GIFTS.map((g) => [g.id, g.unlockAt]), ['finale', FINALE.unlockAt]];
+  const items = [...GIFTS.map((g) => [g.id, g.unlockAt, g.sealedAt]), ['finale', FINALE.unlockAt, FINALE.sealedAt]];
   assert.deepEqual(Object.keys(SEALED).sort(), items.map(([id]) => id).sort());
-  for (const [id, at] of items) {
+  for (const [id, at, sealedAt] of items) {
     const { round, chain } = stanza(SEALED[id]);
     assert.equal(chain, defaultChainInfo.hash, `${id} must use drand quicknet`);
-    assert.equal(round, roundFor(at), `${id} sealed to the wrong round; run npm run seal`);
-    assert.ok(roundTime(round) >= at, `${id} would open before its time`);
-    assert.ok(roundTime(round) - at < defaultChainInfo.period * 1000, `${id} would open late`);
+    // A `sealedAt` marks a gift moved later without resealing: its key comes out early,
+    // the app still waits for `unlockAt`. A fresh `npm run seal` (to `unlockAt`) also passes.
+    const sealedFor = round === roundFor(at) || sealedAt === undefined ? at : sealedAt;
+    if (sealedAt !== undefined) assert.ok(sealedAt <= at, `${id}: sealedAt must not be after unlockAt`);
+    assert.equal(round, roundFor(sealedFor), `${id} sealed to the wrong round; run npm run seal`);
+    assert.ok(roundTime(round) >= sealedFor, `${id} would open before its time`);
+    assert.ok(roundTime(round) - sealedFor < defaultChainInfo.period * 1000, `${id} would open late`);
   }
 });
 

@@ -57,6 +57,9 @@ export const GIFTS = [
   {
     id: 'friend',
     unlockAt: on(MEET_DAY, '17:00'),
+    // Moved from 16:15 without resealing: its key is published at 16:15, the app waits until 17:00.
+    // Delete this line after the next `npm run seal`, which seals it to 17:00.
+    sealedAt: on(MEET_DAY, '16:15'),
     teaser: 'The last surprise. This one has a heartbeat.',
   },
 ];
@@ -65,6 +68,7 @@ export const GIFTS = [
 // Its letter is sealed like the gifts.
 export const FINALE = {
   unlockAt: on(MEET_DAY, '17:00'),
+  sealedAt: on(MEET_DAY, '16:15'), // same as the last gift above
 };
 
 // Random sassy lines when she taps a locked gift.

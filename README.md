@@ -19,6 +19,8 @@ Every clue, title and letter is **time-lock encrypted** with [drand](https://dra
 | Fri 2 Oct, 15:30 | Surprise 4 |
 | Fri 2 Oct, 17:00 | Surprise 5, then the cake once all are opened |
 
+Surprise 5 and the cake were moved from 16:15 to 17:00 without resealing (`sealedAt` in `js/config.js`). Their keys come out at 16:15 and the app waits until 17:00. Run `npm run seal` to make them strict again.
+
 ## Changing content
 1. Edit `secrets/content.json` (plaintext) and/or the times and teasers in `js/config.js`.
 2. `npm run seal`
