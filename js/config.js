@@ -38,7 +38,7 @@ export const GIFTS = [
     unlockAt: on(BIRTHDAY.date, '00:00'),
     teaser: 'A letter from me. It opens the very second your birthday begins.',
   },
-  // ---- 2 October: the day you meet. Four clues, 45 minutes apart. ----
+  // ---- 2 October: the day you meet. Four clues; the last one at 17:00. ----
   {
     id: 'papyrus-1',
     unlockAt: on(MEET_DAY, '14:00'),
@@ -56,7 +56,7 @@ export const GIFTS = [
   },
   {
     id: 'friend',
-    unlockAt: on(MEET_DAY, '16:15'),
+    unlockAt: on(MEET_DAY, '17:00'),
     teaser: 'The last surprise. This one has a heartbeat.',
   },
 ];
@@ -64,7 +64,7 @@ export const GIFTS = [
 // After every gift is opened AND this time has passed, the cake appears.
 // Its letter is sealed like the gifts.
 export const FINALE = {
-  unlockAt: on(MEET_DAY, '16:15'),
+  unlockAt: on(MEET_DAY, '17:00'),
 };
 
 // Random sassy lines when she taps a locked gift.

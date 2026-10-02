@@ -117,12 +117,12 @@ test('the midnight letter opens at 00:00 on her birthday, in her timezone', () =
   assert.equal(letter.unlockAt, Date.parse('2026-09-29T00:00:00+02:00'));
 });
 
-test('meeting day: four clues on 2 Oct between 14:00 and 16:15 Berlin time, best friend last', () => {
+test('meeting day: four clues on 2 Oct between 14:00 and 17:00 Berlin time, best friend last', () => {
   const g = parseGifts(GIFTS);
   assert.deepEqual(g.map((x) => x.id), ['midnight', 'papyrus-1', 'papyrus-2', 'vinyl', 'friend']);
   assert.deepEqual(
     g.slice(1).map((x) => new Date(x.unlockAt).toISOString()),
-    ['2026-10-02T12:00:00.000Z', '2026-10-02T12:45:00.000Z', '2026-10-02T13:30:00.000Z', '2026-10-02T14:15:00.000Z'],
+    ['2026-10-02T12:00:00.000Z', '2026-10-02T12:45:00.000Z', '2026-10-02T13:30:00.000Z', '2026-10-02T15:00:00.000Z'],
   );
 });
 

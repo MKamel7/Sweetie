@@ -17,7 +17,7 @@ Every clue, title and letter is **time-lock encrypted** with [drand](https://dra
 | Fri 2 Oct, 14:00 | Surprise 2 |
 | Fri 2 Oct, 14:45 | Surprise 3 |
 | Fri 2 Oct, 15:30 | Surprise 4 |
-| Fri 2 Oct, 16:15 | Surprise 5, then the cake once all are opened |
+| Fri 2 Oct, 17:00 | Surprise 5, then the cake once all are opened |
 
 ## Changing content
 1. Edit `secrets/content.json` (plaintext) and/or the times and teasers in `js/config.js`.
